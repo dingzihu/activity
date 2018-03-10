@@ -55,7 +55,8 @@ class Jssdk {
 
     private function getJsApiTicket() {
         // jsapi_ticket 应该全局存储与更新，以下代码以写入到文件中做示例
-        $data = json_decode(Cache::get('jsapi_ticket'.$this->appId));
+
+        $data = json_decode(cache('jsapi_ticket'.$this->appId));
         if (!isset($data->expire_time) || $data->expire_time < time()) {
             $accessToken = $this->getAccessToken();
             // 如果是企业号用以下 URL 获取 ticket
@@ -68,7 +69,7 @@ class Jssdk {
                 $data['expire_time'] = time() + 7000;
                 $data['jsapi_ticket'] = $ticket;
                 $expiresAt = Carbon::now()->addMinutes(7000);
-                Cache::put('jsapi_ticket'.$this->appId, json_encode($data), $expiresAt);
+                cache('jsapi_ticket'.$this->appId, json_encode($data), $expiresAt);
             }
         } else {
             $ticket = $data->jsapi_ticket;
@@ -79,7 +80,7 @@ class Jssdk {
 
     private function getAccessToken() {
         // access_token 应该全局存储与更新，以下代码以写入到文件中做示例
-        $data = json_decode(Cache::get('access_token'.$this->appId));
+        $data = json_decode(cache('access_token'.$this->appId));
         if (!isset($data->expire_time) || $data->expire_time < time()) {
             // 如果是企业号用以下URL获取access_token
             // $url = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=$this->appId&corpsecret=$this->appSecret";
@@ -91,7 +92,7 @@ class Jssdk {
                 $data['expire_time'] = time() + 7000;
                 $data['access_token'] = $access_token;
                 $expiresAt = Carbon::now()->addMinutes(7000);
-                Cache::put('access_token'.$this->appId, json_encode($data), $expiresAt);
+                cache('access_token'.$this->appId, json_encode($data), $expiresAt);
             }
         } else {
             $access_token = $data->access_token;
